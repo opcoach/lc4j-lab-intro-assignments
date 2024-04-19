@@ -19,8 +19,8 @@ public class _1_TextGeneration {
         //      - create a ChatLanguageModel of type OpenAi
         //      - set your key
         //      - generate an answer based on your input and print to console
-        ChatLanguageModel modelA = null;
-        String answerA = null;
+        ChatLanguageModel modelA = OpenAiChatModel.withApiKey(ApiKeys.OPENAI_API_KEY);
+        String answerA = modelA.generate("que connais tu de langchain4j ? ");
         System.out.println("Answer A: " + answerA);
 
         // LangChain4j has many more integrations with model providers, such as Gemini (Google Vertex) and Mistral AI
@@ -53,7 +53,7 @@ public class _1_TextGeneration {
         StreamingChatLanguageModel modelC = null;
         System.out.println("Answer C: ");
 
-        modelC.generate("your prompt"
+        modelC.generate("Quel est la derniere version de java ? "
                 , new StreamingResponseHandler<AiMessage>() {
                     @Override
                     public void onNext(String s) {

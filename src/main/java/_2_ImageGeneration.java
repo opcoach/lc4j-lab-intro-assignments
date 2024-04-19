@@ -21,9 +21,9 @@ public class _2_ImageGeneration {
         //      - generate and inspect your image
         public static void main(String[] args) {
 
-            ImageModel model = null;
+            ImageModel model = OpenAiImageModel.withApiKey(ApiKeys.OPENAI_API_KEY);
 
-            Response<Image> response = null;
+            Response<Image> response = model.generate("plane in mountains");
             System.out.println(response.content().url());
         }
     }
@@ -40,7 +40,10 @@ public class _2_ImageGeneration {
             //      - generate your image and persist it to src/main/rsources/result-images
             //      (use builder with .persistTo( ... ) )
 
-            ImageModel model = null;
+            ImageModel model = OpenAiImageModel.builder().modelName("dall-e-2")
+                               .apiKey(ApiKeys.OPENAI_API_KEY)
+                               .persistTo(Path.of("src/main/java/resources/result-images"))
+                               .build();
 
             Response<Image> response = model.generate("2 funny cats");
 
