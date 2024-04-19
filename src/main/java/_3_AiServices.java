@@ -7,6 +7,7 @@ import dev.langchain4j.model.output.structured.Description;
 import dev.langchain4j.service.*;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 import static java.time.Duration.ofSeconds;
@@ -32,14 +33,18 @@ public class _3_AiServices {
         //      - create the AIService and use it to generate a message
 
         // 1. AIService interface declaration
+        interface ChatAssistant{
+            String chat(String prompt);
+        }
 
         public static void main(String[] args) {
             // 2. Create AIService
+            ChatAssistant assistant = AiServices.create(ChatAssistant.class, model);
 
 
             // 3. Use AIService
             String userMessage = "Translate 'Plus-Values des cessions de valeurs mobilières, de droits sociaux et gains assimilés'";
-            String answer = null;
+            String answer = assistant.chat(userMessage);
             System.out.println(answer);
         }
     }
@@ -58,33 +63,42 @@ public class _3_AiServices {
 
         // 1. AIService interface declaration
         interface TextUtils {
+            // Annotation 
+            @SystemMessage(" you are a professional translater into {{language}}")
+            @UserMessage("translate this text : {{text}}")
+             public String translate(@V("text") String texte, @V("language") String language);
 
+             @SystemMessage("Summarize each sentence from the user message in {{n}} bullet points. Provide only bullets points")
+             public List<String> summarize(@UserMessage String text, @V("n") int n);
+
+             @UserMessage("extract date and time from this text {{text}}")
+             public LocalDateTime extractDateTimeFrom(@V("text") String text);
 
         }
 
         public static void main(String[] args) {
 
             // 2. Create AIService
-            TextUtils utils = null;
+            TextUtils utils = AiServices.create(TextUtils.class, model);
 
             // 3. Use AIService
             // Try out translator service (uncomment)
-            // String translation = utils.translate("Hello, how are you?", "italian");
-            // System.out.println(translation);
+            String translation = utils.translate("Hello, how are you?", "italian");
+            System.out.println(translation);
 
             String text = "AI, or artificial intelligence, is a branch of computer science that aims to create "
                     + "machines that mimic human intelligence. This can range from simple tasks such as recognizing "
                     + "patterns or speech to more complex tasks like making decisions or predictions.";
 
             // Try out summarizer (uncomment)
-            // List<String> bulletPoints = utils.summarize(text, 3);
-            // bulletPoints.forEach(System.out::println);
+            List<String> bulletPoints = utils.summarize(text, 3);
+            bulletPoints.forEach(System.out::println);
 
             // Try out DateTime extractor (uncomment)
             text = "The tranquility pervaded the evening of 1968, just fifteen minutes shy of midnight,"
                     + " following the celebrations of Independence Day.";
-            // LocalDateTime dateTime = utils.extractDateTimeFrom(text);
-            // System.out.println(dateTime);
+            LocalDateTime dateTime = utils.extractDateTimeFrom(text);
+            System.out.println(dateTime);
         }
     }
 
