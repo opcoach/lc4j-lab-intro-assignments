@@ -40,20 +40,21 @@ public class _4_Memory {
         public static void main(String[] args) {
 
             // 2. Create ChatMemory
-            ChatMemory chatMemory = null;
+            ChatMemory chatMemory = MessageWindowChatMemory.withMaxMessages(10);
             // 3. Create model
             ChatLanguageModel model = OpenAiChatModel.withApiKey(ApiKeys.OPENAI_API_KEY);
 
             // 4. Generate AIService with memory and model
             Assistant assistant = AiServices.builder(Assistant.class)
                     .chatLanguageModel(model)
+                    .chatMemory(chatMemory)
                     .build();
 
             // 5. Use AIService with memory
-            String answer = null;
+            String answer = assistant.chat("Genere un planning pour 4 seance de 1h30 tous les mardis à partir du 12/05/2024 vers 9h. Genere au format csv avec 3 colonnes : date, heure debut, heure fin. Evite les jours fériés");
             System.out.println(answer);
 
-            String answerWithName = null;
+            String answerWithName = assistant.chat("Donne moi la seconde séance planifiée");
             System.out.println(answerWithName);
         }
     }
