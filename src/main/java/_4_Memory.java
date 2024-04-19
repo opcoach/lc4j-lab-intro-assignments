@@ -79,7 +79,8 @@ public class _4_Memory {
 
             // 1. Initialize ChatMemory with token limiter
             Tokenizer tokenizer = new OpenAiTokenizer("gpt-3.5-turbo");
-            ChatMemory chatMemory = null;
+            ChatMemory chatMemory = TokenWindowChatMemory.builder().
+                  maxTokens(1000, tokenizer).build();
 
             // 2. Add SystemMessage to instruct the model how to behave
             SystemMessage systemMessage = SystemMessage.from(
@@ -90,6 +91,7 @@ public class _4_Memory {
 
             // Add some examples of fictive UserMessages and AIMessages to force the model to answer in our format.
             // This is called the few-shot method
+            chatMemory.add(systemMessage);
             populateWithExamples(chatMemory);
 
             // 3. Create model
@@ -97,11 +99,11 @@ public class _4_Memory {
 
             // 4. Generate AIService with memory and model
             AIServiceWithMemory.Assistant assistant = AiServices.builder(AIServiceWithMemory.Assistant.class)
-                    .chatLanguageModel(model)
+                    .chatLanguageModel(model).chatMemory(chatMemory)
                     .build();
 
             // 5. Use AIService with few-shot memory
-            String answer = assistant.chat("your question");
+            String answer = assistant.chat("The system crashed on android. How can we solve the problem ? ");
             System.out.print(answer);
         }
 
